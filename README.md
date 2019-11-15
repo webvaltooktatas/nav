@@ -1,1 +1,1 @@
-# NAV - JAVA EE oktatás
+# NAV - Spring oktatás
