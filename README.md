@@ -15,7 +15,9 @@ Ezen felül minden gyakorlati feladat root könyvtárában található egy READM
 <h2>Egy kis emlékezető a Maven parancsokról</h2>
 
 `mvn install` – az alkalmazásunk lefordítása
+
 `mvn wildfly:start -f pom.xml` – Wildfly alkalmazásszerver indítása a Wildlfy plugin segítségével (amennyiben még nem volt, ez letölt egy wildfly szervert számunkra)
+
 `mvn wildfly:deploy -f pom.xml` – Alkalmazás kitelepítése az alkalmazászerverre
 
 Nyissuk meg a böngészőt és írjuk be: `http://localhost:8080/javaee`
