@@ -41,6 +41,7 @@ public class Bank implements BankAPI {
         if (osszeg > 0 && bejelentkezettFelhasznalo.getEgyenleg() != null && osszeg <= bejelentkezettFelhasznalo.getEgyenleg().getErtek()) {
             int ujEgyenleg = bejelentkezettFelhasznalo.getEgyenleg().getErtek() - osszeg;
             bejelentkezettFelhasznalo.getEgyenleg().setErtek(ujEgyenleg);
+            bejelentkezettFelhasznalo = felhasznaloDao.frissit(bejelentkezettFelhasznalo);
             return true;
         }
         return false;
@@ -55,14 +56,13 @@ public class Bank implements BankAPI {
             if (bejelentkezettFelhasznalo.getEgyenleg() != null) {
                 int ujEgyenleg = bejelentkezettFelhasznalo.getEgyenleg().getErtek() + osszeg;
                 bejelentkezettFelhasznalo.getEgyenleg().setErtek(ujEgyenleg);
+                bejelentkezettFelhasznalo = felhasznaloDao.frissit(bejelentkezettFelhasznalo);
             } else {
                 Egyenleg egyenleg = new Egyenleg();
                 egyenleg.setFelhasznalo(bejelentkezettFelhasznalo);
                 egyenleg.setErtek(osszeg);
-                egyenlegDao.mentes(egyenleg);
                 bejelentkezettFelhasznalo.setEgyenleg(egyenleg);
-                felhasznaloDao.frissit(bejelentkezettFelhasznalo);
-                bejelentkezettFelhasznalo = felhasznaloDao.lekerdez(bejelentkezettFelhasznalo.getId()).get();
+                egyenlegDao.mentes(egyenleg);
             }
             return true;
         }
@@ -78,19 +78,16 @@ public class Bank implements BankAPI {
     public boolean szamlanyitas(String nev) {
         if (nev.length() >= 3) {
             Optional<Felhasznalo> optionalFelhasznalo = felhasznaloDao.lekerdezNevAlapjan(nev);
-            Felhasznalo felhasznalo = optionalFelhasznalo.isPresent() ? optionalFelhasznalo.get() : new Felhasznalo();
+            bejelentkezettFelhasznalo = optionalFelhasznalo.isPresent() ? optionalFelhasznalo.get() : new Felhasznalo();
             if (!optionalFelhasznalo.isPresent()) {
-                felhasznalo.setNev(nev);
-                felhasznaloDao.mentes(felhasznalo);
-                felhasznalo = felhasznaloDao.lekerdezNevAlapjan(nev).get();
+                bejelentkezettFelhasznalo.setNev(nev);
+                felhasznaloDao.mentes(bejelentkezettFelhasznalo);
             }
-            bejelentkezettFelhasznalo = felhasznalo;
             return true;
         }
         return false;
     }
 }
-
 ```
 
 
@@ -208,7 +205,7 @@ public interface Dao<T> {
 
     void mentes(T t);
 
-    void frissit(T t);
+    T frissit(T t);
 
     void torol(T t);
 }
@@ -280,8 +277,8 @@ public class FelhasznaloDao implements IFelhasznaloDao {
     }
 
     @Override
-    public void frissit(Felhasznalo user) {
-        perzisztenciaAPI.getEntityManager().merge(user);
+    public Felhasznalo frissit(Felhasznalo user) {
+        return perzisztenciaAPI.getEntityManager().merge(user);
     }
 
     @Override
@@ -323,8 +320,8 @@ public class EgyenlegDao implements IEgyenlegDao {
     }
 
     @Override
-    public void frissit(Egyenleg user) {
-        perzisztenciaAPI.getEntityManager().merge(user);
+    public Egyenleg frissit(Egyenleg user) {
+        return perzisztenciaAPI.getEntityManager().merge(user);
     }
 
     @Override
