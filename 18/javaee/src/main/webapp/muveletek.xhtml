@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+<h:body>
+    <h:form id="muveletiForm">
+        <div>
+            <h:outputText value="Udv, #{szamla.nev}"/>
+            <br/>
+        </div>
+        <h:outputText value="Osszeg: "/>
+        <h:inputText id="osszeg" value="#{szamla.osszeg}"/>
+        <br/>
+
+        <h:outputText value="Muvelet: "/>
+        <br/>
+        <h:selectOneRadio value="#{szamla.muvelet}">
+            <f:selectItem itemValue="betet" itemLabel="Betet"/>
+            <f:selectItem itemValue="kivet" itemLabel="Kivet"/>
+            <f:selectItem itemValue="egyenleg" itemLabel="Egyenleg"/>
+        </h:selectOneRadio>
+        <br/>
+        <div>
+            <h:outputText value="#{szamla.uzenet}"/>
+        </div>
+
+        <h:commandButton value="Kuldes" action="#{muveletAPI.feldolgozas}"/>
+        <h:commandButton value="Kijelentkezes" action="#{muveletAPI.kijelentkezes}"/>
+    </h:form>
+</h:body>
+</html>
